@@ -16,7 +16,7 @@ import sys
 import os
 import cocos
 from MultiLanguage import MultiLanguage
-import BaseHTTPServer
+import http.server as BaseHTTPServer
 import webbrowser
 import threading
 import subprocess

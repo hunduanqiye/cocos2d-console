@@ -2,7 +2,7 @@
 import os
 import os.path
 import json
-import urllib2
+import urllib.request as urllib2
 import re
 
 import cocos
@@ -43,14 +43,14 @@ def compare_version(version1, version2):
 
     if n1 > n2:
         n = n1
-        for x in xrange(n2,n):
+        for x in range(n2,n):
             v2.append("0")
     else:
         n = n2
-        for x in xrange(n1,n):
+        for x in range(n1,n):
             v1.append("0")
 
-    for x in xrange(0,n):
+    for x in range(0,n):
         ver_num1, ver_str1 = convert_version_part(v1[x])
         ver_num2, ver_str2 = convert_version_part(v2[x])
         if ver_num1 > ver_num2:
@@ -201,7 +201,7 @@ class PackageHelper:
                 return
 
         package_newest = package_list[0]
-        for x in xrange(1,n-1):
+        for x in range(1,n-1):
             package_newest = get_newer_package(package_list[x], package_newest)
 
         return package_newest

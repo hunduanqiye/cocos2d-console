@@ -21,7 +21,7 @@ import re
 import sys
 import shutil
 import json
-import build_web
+from . import build_web
 import utils
 
 class CCPluginCompile(cocos.CCPlugin):
@@ -211,7 +211,7 @@ class CCPluginCompile(cocos.CCPlugin):
         try:
             return multiprocessing.cpu_count()
         except Exception:
-            print MultiLanguage.get_string('COMPILE_DETECT_CPU_FAILED')
+            print(MultiLanguage.get_string('COMPILE_DETECT_CPU_FAILED'))
             return 1
 
     def _get_output_dir(self):
@@ -705,7 +705,7 @@ class CCPluginCompile(cocos.CCPlugin):
             if cfg_obj.target_name is not None:
                 targetName = cfg_obj.target_name
             else:
-                names = re.split("\*", targets.group())
+                names = re.split(r"\*", targets.group())
                 for name in names:
                     if "iOS" in name or "-mobile" in name:
                         targetName = str.strip(name)
@@ -821,8 +821,8 @@ class CCPluginCompile(cocos.CCPlugin):
                     self._run_cmd(ipa_cmd)
 
             cocos.Logging.info(MultiLanguage.get_string('COMPILE_INFO_BUILD_SUCCEED'))
-        except Exception, e:
-            print str(e)
+        except Exception as e:
+            print(str(e))
             raise cocos.CCPluginError(MultiLanguage.get_string('COMPILE_ERROR_BUILD_FAILED'),
                                       cocos.CCPluginError.ERROR_BUILD_FAILED)
         finally:
@@ -893,7 +893,7 @@ class CCPluginCompile(cocos.CCPlugin):
             if cfg_obj.target_name is not None:
                 targetName = cfg_obj.target_name
             else:
-                names = re.split("\*", targets.group())
+                names = re.split(r"\*", targets.group())
                 for name in names:
                     if "Mac" in name or "-desktop" in name:
                         targetName = str.strip(name)
@@ -1394,7 +1394,7 @@ class CCPluginCompile(cocos.CCPlugin):
             regexp_set_app_name = re.compile(r'\s*set\s*\(\s*APP_NAME', re.IGNORECASE)
             for line in f.readlines():
                 if regexp_set_app_name.search(line):
-                    self.project_name = re.search('APP_NAME ([^\)]+)\)', line, re.IGNORECASE).group(1)
+                    self.project_name = re.search(r'APP_NAME ([^\)]+)\)', line, re.IGNORECASE).group(1)
                     break
             if hasattr(self, 'project_name') == False:
 	            raise cocos.CCPluginError("Couldn't find APP_NAME in CMakeLists.txt")

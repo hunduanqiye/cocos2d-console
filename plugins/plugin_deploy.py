@@ -126,7 +126,7 @@ class CCPluginDeploy(cocos.CCPlugin):
                     minor = int(match.group(2))
                     if major > 7:
                         try:
-                            key = _winreg.OpenKey(wp, "%s\Install Path" % version)
+                            key = _winreg.OpenKey(wp, r"%s\Install Path" % version)
                             value, type = _winreg.QueryValueEx(key, "Install Path")
                             tool_path = os.path.join(value, "Tools", "XAP Deployment", "XapDeployCmd.exe")
                             if os.path.isfile(tool_path):

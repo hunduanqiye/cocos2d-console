@@ -35,8 +35,8 @@ class MultiLanguage(object):
         ret = []
         if info is not None:
             for key in info.keys():
-                if isinstance(key, unicode):
-                    ret.append(key.encode('utf-8'))
+                if isinstance(key, str):
+                    ret.append(key)  # In Python 3, strings are already unicode
 
         return ret
 
@@ -53,16 +53,9 @@ class MultiLanguage(object):
         if fmt_value is None:
             ret = fmt
         else:
+            # In Python 3, all strings are already unicode, no need for encoding
             if isinstance(fmt_value, tuple):
-                dst_values = []
-                for value in fmt_value:
-                    if isinstance(value, unicode):
-                        dst_values.append(value.encode(cls.get_instance().get_encoding()))
-                    else:
-                        dst_values.append(value)
-                ret = fmt % tuple(dst_values)
-            elif isinstance(fmt_value, unicode):
-                ret = fmt % fmt_value.encode(cls.get_instance().get_encoding())
+                ret = fmt % fmt_value
             else:
                 ret = fmt % fmt_value
 
@@ -93,16 +86,16 @@ class MultiLanguage(object):
 
         # get the strings info
         if os.path.isfile(cfg_file_path):
-            f = open(cfg_file_path)
-            self.cfg_info = json.load(f, encoding='utf-8')
+            f = open(cfg_file_path, encoding='utf-8')
+            self.cfg_info = json.load(f)
             f.close()
 
-            if self.cfg_info.has_key(cur_lang_key):
+            if cur_lang_key in self.cfg_info:
                 self.cur_lang_strings = self.cfg_info[cur_lang_key]
             else:
                 self.cur_lang_strings = None
 
-            if self.cfg_info.has_key(MultiLanguage.DEFAULT_LANGUAGE):
+            if MultiLanguage.DEFAULT_LANGUAGE in self.cfg_info:
                 self.default_lang_strings = self.cfg_info[MultiLanguage.DEFAULT_LANGUAGE]
             else:
                 self.default_lang_strings = None
@@ -132,13 +125,13 @@ class MultiLanguage(object):
 
     def has_key(self, key, strings_info):
         ret = False
-        if strings_info is not None and strings_info.has_key(key):
+        if strings_info is not None and key in strings_info:
             ret = True
 
         return ret
 
     def set_current_language(self, lang):
-        if (self.cfg_info is not None) and (self.cfg_info.has_key(lang)):
+        if (self.cfg_info is not None) and (lang in self.cfg_info):
             self.cur_lang_strings = self.cfg_info[lang]
         else:
             cocos.Logging.warning(MultiLanguage.get_string('COCOS_WARNING_LANG_NOT_SUPPORT_FMT', lang))
@@ -154,7 +147,8 @@ class MultiLanguage(object):
         else:
             ret= key
 
-        if isinstance(ret, unicode):
-            ret = ret.encode(self.encoding)
+        # In Python 3, strings are already unicode
+        # if isinstance(ret, unicode):
+        #     ret = ret.encode(self.encoding)
 
         return ret

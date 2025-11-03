@@ -44,8 +44,7 @@ class CCPluginNew(cocos.CCPlugin):
 
     def init(self, args):
         self._projname = args.name
-        self._projdir = unicode(
-            os.path.abspath(os.path.join(args.directory, self._projname)), "utf-8")
+        self._projdir = os.path.abspath(os.path.join(args.directory, self._projname))
         self._lang = args.language
         self._package = args.package
         self._tpname = args.template
@@ -57,7 +56,6 @@ class CCPluginNew(cocos.CCPlugin):
         # search for custom paths
         if args.engine_path is not None:
             self._cocosroot = os.path.abspath(args.engine_path)
-            self._cocosroot = unicode(self._cocosroot, "utf-8")
             tp_path = os.path.join(self._cocosroot, "templates")
             if os.path.isdir(tp_path):
                 self._templates_paths.append(tp_path)
@@ -177,7 +175,7 @@ class CCPluginNew(cocos.CCPlugin):
             js_ver_file = os.path.join(self._cocosroot, 'frameworks/js-bindings/bindings/manual/ScriptingCore.h')
             if os.path.isfile(framework_ver_file):
                 # the engine is Cocos Framework
-                f = open(framework_ver_file)
+                f = open(framework_ver_file, encoding='utf-8')
                 ver_str = f.read()
                 f.close()
                 engine_type = 'cocosframework'
@@ -196,7 +194,7 @@ class CCPluginNew(cocos.CCPlugin):
                     engine_type = 'cocos2d-js'
 
                 if ver_file is not None:
-                    f = open(ver_file)
+                    f = open(ver_file, encoding='utf-8')
                     import re
                     for line in f.readlines():
                         match = re.match(pattern, line)
@@ -225,7 +223,7 @@ class CCPluginNew(cocos.CCPlugin):
         data = None
         cfg_path = os.path.join(self._projdir, cocos_project.Project.CONFIG)
         if os.path.isfile(cfg_path):
-            f = open(cfg_path)
+            f = open(cfg_path, encoding='utf-8')
             data = json.load(f)
             f.close()
 
@@ -248,7 +246,7 @@ class CCPluginNew(cocos.CCPlugin):
             data[cocos_project.Project.KEY_HAS_NATIVE] = True
 
         # record the engine version if not predefined
-        if not data.has_key(cocos_project.Project.KEY_ENGINE_VERSION):
+        if cocos_project.Project.KEY_ENGINE_VERSION not in data:
             engine_version = utils.get_engine_version(self._cocosroot)
             if engine_version is not None:
                 data[cocos_project.Project.KEY_ENGINE_VERSION] = engine_version
@@ -312,9 +310,10 @@ class Templates(object):
         valid_templates = {}
         for d in dirs:
             try:
-                f = open(os.path.join(d, 'template_metadata', 'config.json'))
+                f = open(os.path.join(d, 'template_metadata', 'config.json'), encoding='utf-8')
                 # python dictionary
                 dictionary = json.load(f)
+                f.close()
                 # append current path
                 dictionary['path'] = d
                 # use 'key' as key
@@ -386,7 +385,7 @@ class Templates(object):
             cocos.Logging.warning('%d %s' % (i + 1, p[i]))
         cocos.Logging.warning(MultiLanguage.get_string('NEW_SELECT_TEMPLATE_TIP2'))
         while True:
-            option = raw_input()
+            option = input()
             if option.isdigit():
                 option = int(option) - 1
                 if option in range(len(p)):
@@ -420,9 +419,10 @@ class TPCreator(object):
             message = MultiLanguage.get_string('NEW_WARNING_FILE_NOT_FOUND_FMT', tp_json_path)
             raise cocos.CCPluginError(message, cocos.CCPluginError.ERROR_PATH_NOT_FOUND)
 
-        f = open(tp_json_path)
+        f = open(tp_json_path, encoding='utf-8')
         # keep the key order
-        tpinfo = json.load(f, encoding='utf8', object_pairs_hook=OrderedDict)
+        tpinfo = json.load(f, object_pairs_hook=OrderedDict)
+        f.close()
 
         # read the default creating step
         if 'do_default' not in tpinfo:
@@ -473,7 +473,7 @@ class TPCreator(object):
         self.do_cmds(cmds)
 
     def do_cmds(self, cmds):
-        for k, v in cmds.iteritems():
+        for k, v in cmds.items():
             # call cmd method by method/cmd name
             # get from
             # http://stackoverflow.com/questions/3951840/python-how-to-invoke-an-function-on-an-object-dynamically-by-name
@@ -499,14 +499,14 @@ class TPCreator(object):
             message = MultiLanguage.get_string('NEW_WARNING_FILE_NOT_FOUND_FMT', moudle_cfg)
             raise cocos.CCPluginError(message, cocos.CCPluginError.ERROR_PATH_NOT_FOUND)
 
-        f = open(moudle_cfg)
-        data = json.load(f, 'utf8')
+        f = open(moudle_cfg, encoding='utf-8')
+        data = json.load(f)
         f.close()
         modules = data['module']
 
         # must copy moduleConfig.json & CCBoot.js
         file_list = [moduleConfig, data['bootFile']]
-        for k, v in modules.iteritems():
+        for k, v in modules.items():
             module = modules[k]
             for f in module:
                 if f[-2:] == 'js':
@@ -553,7 +553,7 @@ class TPCreator(object):
             message = MultiLanguage.get_string('NEW_WARNING_FILE_NOT_FOUND_FMT', cocosx_files_json)
             raise cocos.CCPluginError(message, cocos.CCPluginError.ERROR_PATH_NOT_FOUND)
 
-        f = open(cocosx_files_json)
+        f = open(cocosx_files_json, encoding='utf-8')
         data = json.load(f)
         f.close()
 
@@ -761,7 +761,7 @@ class TPCreator(object):
             pattern = modify_info["pattern"]
             replace_str = modify_info["replace_string"]
 
-            f = open(modify_file)
+            f = open(modify_file, encoding='utf-8')
             lines = f.readlines()
             f.close()
 
@@ -770,6 +770,6 @@ class TPCreator(object):
                 new_line = re.sub(pattern, replace_str, line)
                 new_lines.append(new_line)
 
-            f = open(modify_file, "w")
+            f = open(modify_file, "w", encoding='utf-8')
             f.writelines(new_lines)
             f.close()

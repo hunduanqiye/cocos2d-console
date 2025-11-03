@@ -43,8 +43,8 @@ import subprocess
 import uuid
 import sys
 
-from UserDict import IterableUserDict
-from UserList import UserList
+from collections.abc import MutableMapping as IterableUserDict
+from collections import UserList
 
 regex = '[a-zA-Z0-9\\._/-]*'
 
@@ -716,7 +716,7 @@ class XcodeProject(PBXDict):
             self.root_object = None
             self.root_group = None
 
-        for k, v in self.objects.iteritems():
+        for k, v in self.objects.items():
             v.id = k
 
     def add_other_cflags(self, flags):
@@ -1825,7 +1825,7 @@ class XcodeProject(PBXDict):
                 else:
                     out.write(' ')
 
-            for key in sorted(root.iterkeys()):  # keep the same order as Apple.
+            for key in sorted(root.keys()):  # keep the same order as Apple.
                 if enters:
                     out.write('\t' + deep)
 

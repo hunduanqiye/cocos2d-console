@@ -9,7 +9,7 @@ import cocos
 from MultiLanguage import MultiLanguage
 
 from time import time
-from functions import *
+from .functions import *
 
 class ZipDownloader(object):
     def __init__(self, url, destdir, package_data, force):
@@ -22,7 +22,7 @@ class ZipDownloader(object):
 
     def download_file(self):
         print(MultiLanguage.get_string('PACKAGE_READY_DOWNLOAD_FMT', (self._filename, self._url)))
-        import urllib2
+        import urllib.request as urllib2
 
         try:
             u = urllib2.urlopen(self._url)

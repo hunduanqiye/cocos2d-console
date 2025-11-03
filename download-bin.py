@@ -80,13 +80,13 @@ class CocosZipInstaller(object):
             print("==> version file doesn't exist")
 
     def get_input_value(self, prompt):
-        ret = raw_input(prompt)
+        ret = input(prompt)
         ret.rstrip(" \t")
         return ret
 
     def download_file(self):
         print("==> Ready to download '%s' from '%s'" % (self._filename, self._url))
-        import urllib2
+        import urllib.request as urllib2
         try:
             u = urllib2.urlopen(self._url)
         except urllib2.HTTPError as e:

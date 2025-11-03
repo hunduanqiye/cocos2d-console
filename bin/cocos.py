@@ -37,8 +37,8 @@ COCOS2D_CONSOLE_VERSION = '2.3'
 
 class Cocos2dIniParser:
     def __init__(self):
-        import ConfigParser
-        self._cp = ConfigParser.ConfigParser(allow_no_value=True)
+        import configparser
+        self._cp = configparser.ConfigParser(allow_no_value=True)
         self._cp.optionxform = str
 
         # read global config file
@@ -212,14 +212,14 @@ class CMDRunner(object):
 
     @staticmethod
     def convert_path_to_cmd(path):
-        """ Escape paths which include spaces to correct style which bash(mac) and cmd(windows) can treat correctly.
+        r""" Escape paths which include spaces to correct style which bash(mac) and cmd(windows) can treat correctly.
 
             eg: on mac: convert '/usr/xxx/apache-ant 1.9.3' to '/usr/xxx/apache-ant\ 1.9.3'
             eg: on windows: convert '"c:\apache-ant 1.9.3"\bin' to '"c:\apache-ant 1.9.3\bin"'
         """
         ret = path
         if os_is_mac():
-            ret = path.replace("\ ", " ").replace(" ", "\ ")
+            ret = path.replace(r"\ ", " ").replace(" ", r"\ ")
 
         if os_is_win32():
             ret = "\"%s\"" % (path.replace("\"", ""))
@@ -229,14 +229,14 @@ class CMDRunner(object):
 
     @staticmethod
     def convert_path_to_python(path):
-        """ Escape paths which include spaces to correct style which python can treat correctly.
+        r""" Escape paths which include spaces to correct style which python can treat correctly.
 
             eg: on mac: convert '/usr/xxx/apache-ant\ 1.9.3' to '/usr/xxx/apache-ant 1.9.3'
             eg: on windows: convert '"c:\apache-ant 1.9.3"\bin' to 'c:\apache-ant 1.9.3\bin'
         """
         ret = path
         if os_is_mac():
-            ret = path.replace("\ ", " ")
+            ret = path.replace(r"\ ", " ")
 
         if os_is_win32():
             ret = ret.replace("\"", "")
@@ -343,7 +343,7 @@ class DataStatistic(object):
 
         if skip_agree_value is None:
             # show the agreement
-            input_value = raw_input(MultiLanguage.get_string('COCOS_AGREEMENT'))
+            input_value = input(MultiLanguage.get_string('COCOS_AGREEMENT'))
             agreed = (input_value.lower() != 'n' and input_value.lower() != 'no')
         else:
             # --agreement is used to skip the input
@@ -460,7 +460,7 @@ class CCPlugin(object):
         if os.path.isdir(cocos2dx_path):
             return cocos2dx_path
 
-        if cls.get_cocos2d_mode() is not "distro":
+        if cls.get_cocos2d_mode() != "distro":
             # In 'distro' mode this is not a warning since
             # the source code is not expected to be installed
             Logging.warning(MultiLanguage.get_string('COCOS_WARNING_ENGINE_NOT_FOUND'))
@@ -469,7 +469,7 @@ class CCPlugin(object):
     @classmethod
     def get_console_path(cls):
         """returns the path where cocos console is installed"""
-        run_path = unicode(get_current_path(), "utf-8")
+        run_path = get_current_path()
         return run_path
 
     @classmethod
@@ -497,7 +497,7 @@ class CCPlugin(object):
             # Try two: cocos2d-x/../../templates
             possible_paths = [['templates'], ['..', '..', 'templates']]
             for p in possible_paths:
-                p = string.join(p, os.sep)
+                p = os.sep.join(p)
                 template_path = os.path.abspath(os.path.join(path, p))
                 try:
                     if os.path.isdir(template_path):
@@ -974,16 +974,12 @@ def run_plugin(command, argv, plugins):
 def _check_python_version():
     major_ver = sys.version_info[0]
     minor_ver = sys.version_info[1]
-    ret = True
-    if major_ver != 2:
-        ret = False
-    elif minor_ver < 7:
-        ret = False
+    if major_ver < 3:
+        print("错误：此脚本需要 Python 3.x 才能运行。")
+        print("请从这里下载 Python 3: https://www.python.org/")
+        return False
 
-    if not ret:
-        print(MultiLanguage.get_string('COCOS_PYTHON_VERSION_TIP_FMT') % (major_ver, minor_ver))
-
-    return ret
+    return True
 
 # gettext
 language = None
