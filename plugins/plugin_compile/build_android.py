@@ -14,7 +14,7 @@ import json
 import re
 from xml.dom import minidom
 
-import project_compile
+from . import project_compile
 
 BUILD_CFIG_FILE="build-cfg.json"
 
@@ -73,8 +73,8 @@ class AndroidBuilder(object):
 
         self.cfg_path = os.path.join(self.app_android_root, BUILD_CFIG_FILE)
         try:
-            f = open(self.cfg_path)
-            cfg = json.load(f, encoding='utf8')
+            f = open(self.cfg_path, encoding='utf-8')
+            cfg = json.load(f)
             f.close()
         except Exception:
             raise cocos.CCPluginError(MultiLanguage.get_string('COMPILE_ERROR_PARSE_CFG_FAILED_FMT', self.cfg_path),

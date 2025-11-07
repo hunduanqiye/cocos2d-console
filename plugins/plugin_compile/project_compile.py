@@ -267,7 +267,7 @@ class CCPluginCompile(cocos.CCPlugin):
         key_of_copy = None
         key_of_must_copy = None
         if self._platforms.is_android_active():
-            from build_android import AndroidBuilder
+            from .build_android import AndroidBuilder
             key_of_copy = AndroidBuilder.CFG_KEY_COPY_TO_ASSETS
             key_of_must_copy = AndroidBuilder.CFG_KEY_MUST_COPY_TO_ASSERTS
         elif self._platforms.is_win32_active():
@@ -472,7 +472,7 @@ class CCPluginCompile(cocos.CCPlugin):
             gradle_support_ndk = True
             
 
-        from build_android import AndroidBuilder
+        from .build_android import AndroidBuilder
         builder = AndroidBuilder(self._verbose, project_android_dir,
                                  self._no_res, self._project, self._mode, self._build_type,
                                  self.app_abi, gradle_support_ndk)
